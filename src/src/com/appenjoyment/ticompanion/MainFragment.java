@@ -83,12 +83,12 @@ public class MainFragment extends Fragment
 		TimeUntil until = TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime);
 		if (until.hasSeconds())
 		{
-			m_countdownView.setText(createDisplayString(until));
+			m_countdownView.setText(TIInfo.createDisplayString(until, getResources()));
 		}
 		else
 		{
 			m_countdownView.setVisibility(View.GONE);
-			m_countdownCaptionView.setText(createDisplayString(until));
+			m_countdownCaptionView.setText(TIInfo.createDisplayString(until, getResources()));
 		}
 	}
 
@@ -105,7 +105,7 @@ public class MainFragment extends Fragment
 		Notification notification = new NotificationCompat.Builder(getActivity())
 				.setContentTitle("TI4 Countdown")
 				// getActivity().getResources().getString("TI4 Countdown"))
-				.setContentText(createDisplayString(TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime)))
+				.setContentText(TIInfo.createDisplayString(TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime), getResources()))
 				.setOnlyAlertOnce(true)
 				.setSmallIcon(R.drawable.ic_launcher)
 				.setContentIntent(PendingIntent.getActivity(getActivity(), 0, new Intent(getActivity(), MainActivity.class), PendingIntent.FLAG_UPDATE_CURRENT))
@@ -114,53 +114,6 @@ public class MainFragment extends Fragment
 
 		NotificationManager notificationManager = (NotificationManager) getActivity().getSystemService(Context.NOTIFICATION_SERVICE);
 		notificationManager.notify(NOTIFICATION_ID, notification);
-	}
-
-	private String createDisplayString(TimeUntil until)
-	{
-		StringBuilder builder = new StringBuilder();
-
-		final String separator = " : ";
-		if (until.hasMonths())
-			builder.append(formatDuration(until.Months, R.string.duration_months));
-
-		if (until.hasDays())
-		{
-			if (builder.length() > 0)
-				builder.append(separator);
-			builder.append(formatDuration(until.Days, R.string.duration_days));
-		}
-
-		if (until.hasHours())
-		{
-			if (builder.length() > 0)
-				builder.append(separator);
-			builder.append(formatDuration(until.Hours, R.string.duration_hours));
-		}
-
-		if (until.hasMinutes() && !until.hasMonths())
-		{
-			if (builder.length() > 0)
-				builder.append(separator);
-			builder.append(formatDuration(until.Minutes, R.string.duration_minutes));
-		}
-
-		if (until.hasSeconds() && !until.hasDays())
-		{
-			if (builder.length() > 0)
-				builder.append(separator);
-			builder.append(formatDuration(until.Seconds, R.string.duration_seconds));
-		}
-
-		if (!until.hasSeconds())
-			builder.append("The Aegis has been reclaimed!");
-
-		return builder.toString();
-	}
-
-	private String formatDuration(int unit, int unitLabel)
-	{
-		return unit + getResources().getString(unitLabel);
 	}
 
 	private void hideNotification()

@@ -1,3 +1,4 @@
+
 package com.appenjoyment.ticompanion;
 
 import android.appwidget.AppWidgetManager;
@@ -10,24 +11,21 @@ import android.util.Log;
 public class CountdownWidgetProvider extends AppWidgetProvider
 {
 	@Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager,
-			int[] appWidgetIds)
+	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
 	{
+		Log.w(LOG, "onUpdate");
 
-		Log.w(LOG, "onUpdate method called");
-		// Get all ids
-		ComponentName thisWidget = new ComponentName(context,
-				CountdownWidgetProvider.class);
+		// get all ids
+		ComponentName thisWidget = new ComponentName(context, CountdownWidgetProvider.class);
 		int[] allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
 
-		// Build the intent to call the service
-		Intent intent = new Intent(context.getApplicationContext(),
-				CountdownService.class);
+		// build the intent to call the service
+		Intent intent = new Intent(context.getApplicationContext(), CountdownService.class);
 		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
 
-		// Update the widgets via the service
+		// update the widgets via the service
 		context.startService(intent);
 	}
-	
+
 	private static final String LOG = "CountdownWidgetProvider";
 }
