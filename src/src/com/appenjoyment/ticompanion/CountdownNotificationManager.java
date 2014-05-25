@@ -46,16 +46,6 @@ public final class CountdownNotificationManager
 		return m_showNotification;
 	}
 
-	public void verifyInit(Context applicationContext, int[] appWidgetIds)
-	{
-		// sanity check in case the provider's update/delete methods are called before the app's onCreate
-		if (m_applicationContext == null)
-		{
-			Log.e(TAG, "Init was not previously called! Id count = " + appWidgetIds.length, new RuntimeException());
-			init(applicationContext);
-		}
-	}
-
 	public void showNotification()
 	{
 		Log.i(TAG, "showNotification()");
