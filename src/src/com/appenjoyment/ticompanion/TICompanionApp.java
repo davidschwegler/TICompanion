@@ -10,5 +10,6 @@ public class TICompanionApp extends Application
 	{
 		Log.i("TICompanionApp", "onCreate()");
 		CountdownWidgetManager.getInstance().init(getApplicationContext());
+		CountdownNotificationManager.getInstance().init(getApplicationContext());
 	};
 }
