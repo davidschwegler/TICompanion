@@ -1,111 +1,69 @@
 
 package com.appenjoyment.ticompanion;
 
-import java.util.Random;
-import android.app.PendingIntent;
+import java.util.HashSet;
 import android.app.Service;
-import android.appwidget.AppWidgetManager;
-import android.content.ComponentName;
 import android.content.Intent;
 import android.os.Handler;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
-import android.widget.RemoteViews;
 
 public class CountdownService extends Service
 {
-	@Override
-	public void onStart(Intent intent, int startId)
+	public static final String EXTRA_CLIENT_ID = "ClientId";
+	public static final String EXTRA_REQUEST_KIND = "RequestKind";
+	public static final String REQUEST_KIND_REGISTER = "RequestKindRegister";
+	public static final String REQUEST_KIND_UNREGISTER = "RequestKindUnregister";
+	public static final String BROADCAST_ACTION_UPDATE = "ActionUpdate";
+
+	public CountdownService()
 	{
-		super.onStart(intent, startId);
+		m_clients = new HashSet<String>();
+	}
+
+	public static String getCurrentTimeUntilRendered()
+	{
+		return s_currentTimeUntilRendered;
 	}
 
 	@Override
 	public int onStartCommand(Intent intent, int flags, int startId)
 	{
-		Log.i(LOG, "onStart");
+		Log.i(TAG, "onStart");
 
-		// // create some random data
-		// AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-		//
-		// int[] allWidgetIds = intent.getIntArrayExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS);
-		//
-		// ComponentName thisWidget = new ComponentName(getApplicationContext(), CountdownWidgetProvider.class);
-		// int[] allWidgetIds2 = appWidgetManager.getAppWidgetIds(thisWidget);
-		// Log.w(LOG, "From Intent" + String.valueOf(allWidgetIds.length));
-		// Log.w(LOG, "Direct" + String.valueOf(allWidgetIds2.length));
-		//
-		// for (int widgetId : allWidgetIds)
-		// {
-		// // create some random data
-		// int number = (new Random().nextInt(100));
-		//
-		// RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.widget_layout);
-		// Log.w(LOG, "Setting to " + number);
-		//
-		// remoteViews.setTextViewText(R.id.update, "Random: " + number);
-		//
-		// Intent clickIntent = new Intent(getApplicationContext(), CountdownWidgetProvider.class);
-		//
-		// clickIntent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-		// clickIntent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, allWidgetIds);
-		//
-		// PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		// remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
-		// appWidgetManager.updateAppWidget(widgetId, remoteViews);
-		// }
-		//
-		// stopSelf();
-
-		updateClientList();
-		if (hasClients())
+		if (intent == null)
 		{
-			if (m_until == null)
-				updateTime();
-			updateClients();
+			Log.d(TAG, "Null intent");
+
+			// recreated -- allow the application's registrations to handle this
+			if (m_clients.size() == 0)
+				stopSelf();
 		}
-
-		if (m_runner == null)
+		else
 		{
-			m_runner = new Runnable()
+			String clientId = intent.getStringExtra(EXTRA_CLIENT_ID);
+			String requestKind = intent.getStringExtra(EXTRA_REQUEST_KIND);
+			if (REQUEST_KIND_REGISTER.equals(requestKind))
 			{
-				@Override
-				public void run()
-				{
-					updateClientList();
-					if (hasClients())
-					{
-						updateTime();
-						updateClients();
+				Log.i(TAG, "REQUEST_KIND_REGISTER");
 
-						if (m_until.hasSeconds())
-							s_handler.postDelayed(this,
-									// m_until.hasMonths() ? 60 * 60 * 1000 /* 1hr */: m_until.hasDays() ? 60 * 1000 /* 1min */:
-									1000 /* 1s */);
-					}
-					else
-					{
-						m_until = null;
-						m_runner = null;
-						stopSelf();
-					}
+				if (m_clients.add(clientId) && m_clients.size() == 1)
+					startTrackingTimeUntil();
+			}
+			else if (REQUEST_KIND_UNREGISTER.equals(requestKind))
+			{
+				Log.i(TAG, "REQUEST_KIND_UNREGISTER");
+				if (m_clients.remove(clientId) && m_clients.size() == 0)
+				{
+					stopTrackingTimeUntil();
+					stopSelf();
 				}
-			};
-			s_handler.post(m_runner);
+			}
 		}
 
-		return START_REDELIVER_INTENT;
+		return START_STICKY;
 	}
-
-	// set boot receiver
-	// -- starts this service
-	// onStartCommand
-	// - calls handler to update
-	// Handler
-	// - obtains widget list, whether notification is enabled, whether is bound (for UI)
-	// - updates widgets, notification, bound object
-	// - schedules for 1s/etc (min interval)
-	// - if none, stopSelf
 
 	@Override
 	public IBinder onBind(Intent intent)
@@ -113,45 +71,67 @@ public class CountdownService extends Service
 		return null;
 	}
 
+	private void startTrackingTimeUntil()
+	{
+		Log.i(TAG, "startTrackingTimeUntil()");
+		m_runner = new Runnable()
+		{
+			@Override
+			public void run()
+			{
+				Log.d(TAG, "Runner called");
+
+				// sanity check
+				if (m_runner != this)
+				{
+					Log.e(TAG, "Runner was called, but not current, current = " + m_runner);
+					return;
+				}
+
+				updateTime();
+
+				if (m_until.hasSeconds())
+				{
+					long delay =
+							// m_until.hasMonths() ? 60 * 60 * 1000 /* 1hr */: m_until.hasDays() ? 60 * 1000 /* 1min */:
+							1000 /* 1s */;
+
+					Log.d(TAG, "Runner posting again in " + delay + "ms");
+					s_handler.postDelayed(this, delay);
+				}
+
+				// update clients second in case this broadcast causes them to remove themselves...though this won't happen in the current app code
+				updateClients();
+			}
+		};
+		m_runner.run();
+	}
+
+	private void stopTrackingTimeUntil()
+	{
+		Log.i(TAG, "stopTrackingTimeUntil()");
+		s_handler.removeCallbacks(m_runner);
+		m_runner = null;
+	}
+
 	private void updateTime()
 	{
 		m_until = TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime);
+		s_currentTimeUntilRendered = TIInfo.createDisplayString(m_until, getResources());
+
+		Log.d(TAG, "Updated time until: " + s_currentTimeUntilRendered);
 	}
 
 	private void updateClients()
 	{
-		String rendered = TIInfo.createDisplayString(m_until, getResources());
-		Log.i(LOG, "Setting to " + rendered);
-
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-		for (int widgetId : m_allWidgetIds)
-		{
-			RemoteViews remoteViews = new RemoteViews(getApplicationContext().getPackageName(), R.layout.widget_layout);
-			remoteViews.setTextViewText(R.id.update, rendered);
-
-			Intent clickIntent = new Intent(getApplicationContext(), MainActivity.class);
-			PendingIntent pendingIntent = PendingIntent.getBroadcast(getApplicationContext(), 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-			remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
-			appWidgetManager.updateAppWidget(widgetId, remoteViews);
-		}
+		Intent intent = new Intent(BROADCAST_ACTION_UPDATE);
+		LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 	}
 
-	private boolean hasClients()
-	{
-		return m_allWidgetIds != null && m_allWidgetIds.length != 0;
-	}
-
-	private void updateClientList()
-	{
-		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(getApplicationContext());
-		ComponentName thisWidget = new ComponentName(getApplicationContext(), CountdownWidgetProvider.class);
-		m_allWidgetIds = appWidgetManager.getAppWidgetIds(thisWidget);
-		Log.i(LOG, "Widget count: " + m_allWidgetIds.length);
-	}
-
+	private static final String TAG = "CountdownService";
+	private static final Handler s_handler = new Handler();
+	private static String s_currentTimeUntilRendered;
 	private TimeUntil m_until;
 	private Runnable m_runner;
-	private int[] m_allWidgetIds;
-	private static final Handler s_handler = new Handler();
-	private static final String LOG = "CountdownService";
+	private HashSet<String> m_clients;
 }

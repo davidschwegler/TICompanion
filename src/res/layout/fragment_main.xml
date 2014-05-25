@@ -32,7 +32,7 @@
             android:layout_gravity="center_horizontal"
             android:gravity="center"
             android:text="21d : 15h : 51m"
-            android:textSize="32sp" />
+            android:textSize="24sp" />
 
         <TextView
             android:id="@+id/countdown_caption"

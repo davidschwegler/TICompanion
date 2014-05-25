@@ -8,7 +8,10 @@
         android:minSdkVersion="10"
         android:targetSdkVersion="19" />
 
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
     <application
+        android:name="com.appenjoyment.ticompanion.TICompanionApp"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
@@ -22,11 +25,10 @@
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        
-         <receiver android:name="CountdownWidgetProvider" >
-            <intent-filter >
-                <action 
-                    android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+
+        <receiver android:name=".CountdownWidgetProvider" >
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
             </intent-filter>
 
             <meta-data
@@ -34,7 +36,13 @@
                 android:resource="@xml/widget_info" />
         </receiver>
         
-        <service android:name=".CountdownService"></service> 
+        <receiver android:name=".BootBroadcastReceiver" >
+            <intent-filter>
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+            </intent-filter>
+        </receiver>
+
+        <service android:name=".CountdownService" android:exported="false" />
     </application>
 
 </manifest>
