@@ -8,4 +8,5 @@
     <string name="duration_hours">H</string>
     <string name="duration_minutes">M</string>
     <string name="duration_seconds">S</string>
+    <string name="notification_title">TI4 Countdown</string>
 </resources>

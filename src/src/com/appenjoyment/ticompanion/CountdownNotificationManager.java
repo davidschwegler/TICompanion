@@ -132,8 +132,7 @@ public final class CountdownNotificationManager
 
 		Notification notification =
 				new NotificationCompat.Builder(m_applicationContext)
-						.setContentTitle("TI4 Countdown")
-						// getActivity().getResources().getString("TI4 Countdown"))
+						.setContentTitle(m_applicationContext.getString(R.string.notification_title))
 						.setContentText(rendered)
 						.setOnlyAlertOnce(true)
 						.setSmallIcon(R.drawable.ic_launcher)
