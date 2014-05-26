@@ -128,9 +128,9 @@ public final class CountdownNotificationManager
 						.setContentText(rendered)
 						.setOnlyAlertOnce(true)
 						.setSmallIcon(R.drawable.ic_launcher)
-						.setContentIntent(
-								PendingIntent.getActivity(m_applicationContext, 0, new Intent(m_applicationContext, MainActivity.class),
-										PendingIntent.FLAG_UPDATE_CURRENT))
+						.setContentIntent(PendingIntent.getActivity(m_applicationContext, 0,
+								IntentUtility.getBringToFrontIntent(m_applicationContext, MainActivity.class),
+								PendingIntent.FLAG_UPDATE_CURRENT))
 						.setOngoing(true)
 						.build();
 
