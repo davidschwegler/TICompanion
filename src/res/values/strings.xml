@@ -1,14 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TI4 Countdown</string>
+    <string name="app_name">TI4 Countdown!</string>
     <string name="action_show_notification">Show notification</string>
     <string name="duration_months">MO</string>
     <string name="duration_days">D</string>
     <string name="duration_hours">H</string>
     <string name="duration_minutes">M</string>
     <string name="duration_seconds">S</string>
-    <string name="notification_title">TI4 Countdown</string>
+    <string name="notification_title">TI4 Countdown!</string>
     <string name="main_caption_date">Jul 18-21, 2014</string>
     <string name="main_caption_until_reclaimed">…until the Aegis is ready to be reclaimed…</string>
     <string name="date_display_past">The Aegis has been reclaimed!</string>
