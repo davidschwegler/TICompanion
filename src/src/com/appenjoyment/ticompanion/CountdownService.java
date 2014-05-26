@@ -43,11 +43,7 @@ public class CountdownService extends Service
 
 		if (intent == null)
 		{
-			Log.d(TAG, "Null intent");
-
-			// recreated -- allow the application's registrations to handle this
-			if (m_clients.size() == 0)
-				stopSelf();
+			Log.i(TAG, "Null intent");
 		}
 		else
 		{
@@ -78,6 +74,15 @@ public class CountdownService extends Service
 	public IBinder onBind(Intent intent)
 	{
 		return null;
+	}
+
+	@Override
+	public void onDestroy()
+	{
+		Log.i(TAG, "onDestroy()");
+		super.onDestroy();
+
+		stopTrackingTimeUntil();
 	}
 
 	private void startTrackingTimeUntil()
@@ -137,12 +142,15 @@ public class CountdownService extends Service
 
 	private void stopTrackingTimeUntil()
 	{
-		Log.i(TAG, "stopTrackingTimeUntil()");
-		s_handler.removeCallbacks(m_runner);
-		m_runner = null;
+		if (m_runner != null)
+		{
+			Log.i(TAG, "stopTrackingTimeUntil()");
+			s_handler.removeCallbacks(m_runner);
+			m_runner = null;
 
-		unregisterReceiver(m_screenOnOffReceiver);
-		m_screenOnOffReceiver = null;
+			unregisterReceiver(m_screenOnOffReceiver);
+			m_screenOnOffReceiver = null;
+		}
 	}
 
 	private void pauseTrackingTimeUntil()
