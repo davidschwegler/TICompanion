@@ -1,4 +1,3 @@
-
 package com.appenjoyment.ticompanion;
 
 import android.app.Notification;
@@ -87,7 +86,8 @@ public final class CountdownNotificationManager
 			@Override
 			public void onReceive(Context context, Intent intent)
 			{
-				Log.d(TAG, "BroadcastReceiver.onReceive()");
+				if (LOG_DEBUG)
+					Log.d(TAG, "BroadcastReceiver.onReceive()");
 				updateNotification();
 			}
 		};
@@ -114,11 +114,13 @@ public final class CountdownNotificationManager
 		String rendered = CountdownService.getCurrentTimeUntilRendered();
 		if (rendered == null)
 		{
-			Log.i(TAG, "Wanted to update, but current time is null");
+			if (LOG_DEBUG)
+				Log.d(TAG, "Wanted to update, but current time is null");
 			return;
 		}
 
-		Log.i(TAG, "Setting to " + rendered);
+		if (LOG_DEBUG)
+			Log.d(TAG, "Setting to " + rendered);
 
 		Notification notification =
 				new NotificationCompat.Builder(m_applicationContext)
@@ -151,6 +153,7 @@ public final class CountdownNotificationManager
 	{
 	}
 
+	private static final boolean LOG_DEBUG = BuildConfig.DEBUG;
 	private static final String TAG = "CountdownNotificationManager";
 	private static final String PREFERENCES_NAME = "CountdownNotificationManager";
 	private static final String PREFERENCE_KEY_SHOW_NOTIFICATION = "ShowNotification";

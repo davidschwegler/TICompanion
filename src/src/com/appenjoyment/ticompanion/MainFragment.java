@@ -1,4 +1,3 @@
-
 package com.appenjoyment.ticompanion;
 
 import android.content.BroadcastReceiver;
@@ -94,11 +93,13 @@ public class MainFragment extends Fragment
 		String rendered = CountdownService.getCurrentTimeUntilRendered();
 		if (rendered == null)
 		{
-			Log.i(TAG, "Wanted to update, but current time is null");
+			if (LOG_DEBUG)
+				Log.d(TAG, "Wanted to update, but current time is null");
 			return;
 		}
 
-		Log.i(TAG, "Setting to " + rendered);
+		if (LOG_DEBUG)
+			Log.d(TAG, "Setting to " + rendered);
 		if (until.hasSeconds())
 		{
 			m_countdownView.setVisibility(View.VISIBLE);
@@ -124,7 +125,8 @@ public class MainFragment extends Fragment
 			@Override
 			public void onReceive(Context context, Intent intent)
 			{
-				Log.d(TAG, "BroadcastReceiver.onReceive()");
+				if (LOG_DEBUG)
+					Log.d(TAG, "BroadcastReceiver.onReceive()");
 				updateTimeUntil();
 			}
 		};
@@ -146,6 +148,7 @@ public class MainFragment extends Fragment
 		getActivity().startService(intent);
 	}
 
+	private static final boolean LOG_DEBUG = BuildConfig.DEBUG;
 	private static final String TAG = "MainFragment";
 	private static final String CLIENT_ID = "MainFragment";
 

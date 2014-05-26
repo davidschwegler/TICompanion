@@ -1,7 +1,8 @@
-
 package com.appenjoyment.ticompanion;
 
 import java.util.HashSet;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
 import android.app.Service;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -10,6 +11,7 @@ import android.content.IntentFilter;
 import android.os.Handler;
 import android.os.IBinder;
 import android.os.PowerManager;
+import android.os.SystemClock;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 
@@ -51,16 +53,22 @@ public class CountdownService extends Service
 			String requestKind = intent.getStringExtra(EXTRA_REQUEST_KIND);
 			if (REQUEST_KIND_REGISTER.equals(requestKind))
 			{
-				Log.i(TAG, REQUEST_KIND_REGISTER);
+				if (LOG_DEBUG)
+					Log.i(TAG, REQUEST_KIND_REGISTER);
 
 				if (m_clients.add(clientId) && m_clients.size() == 1)
+				{
+					Log.i(TAG, "Registered first");
 					startTrackingTimeUntil();
+				}
 			}
 			else if (REQUEST_KIND_UNREGISTER.equals(requestKind))
 			{
-				Log.i(TAG, REQUEST_KIND_UNREGISTER);
+				if (LOG_DEBUG)
+					Log.i(TAG, REQUEST_KIND_UNREGISTER);
 				if (m_clients.remove(clientId) && m_clients.size() == 0)
 				{
+					Log.i(TAG, "Unregistered all");
 					stopTrackingTimeUntil();
 					stopSelf();
 				}
@@ -113,7 +121,8 @@ public class CountdownService extends Service
 			@Override
 			public void run()
 			{
-				Log.d(TAG, "Runner called");
+				if (LOG_DEBUG)
+					Log.d(TAG, "Runner called");
 
 				// sanity check
 				if (m_runner != this)
@@ -128,7 +137,8 @@ public class CountdownService extends Service
 				{
 					long delay = TIInfo.getRefreshFrequency(s_currentTimeUntil);
 
-					Log.d(TAG, "Runner posting again in " + delay + "ms");
+					if (LOG_DEBUG)
+						Log.d(TAG, "Runner posting again in " + delay + "ms");
 					s_handler.postDelayed(this, delay);
 				}
 
@@ -187,7 +197,8 @@ public class CountdownService extends Service
 		s_currentTimeUntil = TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime);
 		s_currentTimeUntilRendered = TIInfo.createDisplayString(s_currentTimeUntil, getResources());
 
-		Log.d(TAG, "Updated time until: " + s_currentTimeUntilRendered);
+		if (LOG_DEBUG)
+			Log.d(TAG, "Updated time until: " + s_currentTimeUntilRendered);
 	}
 
 	private void updateClients()
@@ -196,6 +207,7 @@ public class CountdownService extends Service
 		LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
 	}
 
+	private static final boolean LOG_DEBUG = BuildConfig.DEBUG;
 	private static final String TAG = "CountdownService";
 	private static final Handler s_handler = new Handler();
 	private static String s_currentTimeUntilRendered;

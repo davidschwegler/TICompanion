@@ -1,4 +1,3 @@
-
 package com.appenjoyment.ticompanion;
 
 import java.util.ArrayList;
@@ -34,7 +33,7 @@ public final class CountdownWidgetManager
 		m_applicationContext = applicationContext;
 		m_prefs = applicationContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
 		m_widgetIds = new HashSet<Integer>();
-		
+
 		String widgetIdsSaved = m_prefs.getString(PREFERENCE_KEY_WIDGET_IDS, "");
 		Log.i(TAG, "Widget Ids loaded: " + widgetIdsSaved);
 
@@ -118,7 +117,8 @@ public final class CountdownWidgetManager
 			@Override
 			public void onReceive(Context context, Intent intent)
 			{
-				Log.d(TAG, "BroadcastReceiver.onReceive()");
+				if (LOG_DEBUG)
+					Log.d(TAG, "BroadcastReceiver.onReceive()");
 				updateWidgets();
 			}
 		};
@@ -151,11 +151,13 @@ public final class CountdownWidgetManager
 		String rendered = CountdownService.getCurrentTimeUntilRendered();
 		if (rendered == null)
 		{
-			Log.i(TAG, "Wanted to update " + id + ", but current time is null");
+			if (LOG_DEBUG)
+				Log.d(TAG, "Wanted to update " + id + ", but current time is null");
 			return;
 		}
 
-		Log.i(TAG, "Setting " + id + " to " + rendered);
+		if (LOG_DEBUG)
+			Log.d(TAG, "Setting " + id + " to " + rendered);
 
 		RemoteViews remoteViews = new RemoteViews(m_applicationContext.getPackageName(), R.layout.widget_layout);
 		remoteViews.setTextViewText(R.id.update, rendered);
@@ -188,6 +190,7 @@ public final class CountdownWidgetManager
 	{
 	}
 
+	private static final boolean LOG_DEBUG = BuildConfig.DEBUG;
 	private static final String TAG = "CountdownWidgetProvider";
 	private static final String PREFERENCES_NAME = "CountdownWidgetManager";
 	private static final String PREFERENCE_KEY_WIDGET_IDS = "WidgetIds";
