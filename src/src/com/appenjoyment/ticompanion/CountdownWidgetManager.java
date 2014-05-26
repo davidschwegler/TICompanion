@@ -161,7 +161,7 @@ public final class CountdownWidgetManager
 		remoteViews.setTextViewText(R.id.update, rendered);
 
 		Intent clickIntent = new Intent(m_applicationContext, MainActivity.class);
-		PendingIntent pendingIntent = PendingIntent.getBroadcast(m_applicationContext, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent pendingIntent = PendingIntent.getActivity(m_applicationContext, 0, clickIntent, PendingIntent.FLAG_UPDATE_CURRENT);
 		remoteViews.setOnClickPendingIntent(R.id.update, pendingIntent);
 
 		AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(m_applicationContext);
