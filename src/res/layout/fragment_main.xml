@@ -22,7 +22,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:text="Jul 18-21, 2014" />
+            android:text="@string/main_caption_date" />
 
         <TextView
             android:id="@+id/countdown"
@@ -31,7 +31,6 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:text="21d : 15h : 51m"
             android:textSize="24sp" />
 
         <TextView
@@ -42,7 +41,7 @@
             android:layout_height="wrap_content"
             android:layout_gravity="center_horizontal"
             android:gravity="center"
-            android:text="…until the Aegis is ready to be reclaimed…" />
+            android:text="@string/main_caption_until_reclaimed" />
     </LinearLayout>
 
 </FrameLayout>

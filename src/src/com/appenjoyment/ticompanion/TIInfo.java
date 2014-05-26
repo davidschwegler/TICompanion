@@ -46,9 +46,15 @@ public final class TIInfo
 		}
 
 		if (!until.hasSeconds())
-			builder.append("The Aegis has been reclaimed!");
+			builder.append(resources.getString(R.string.date_display_past));
 
 		return builder.toString();
+	}
+
+	public static long getRefreshFrequency(TimeUntil until)
+	{
+		return // until.hasMonths() ? 60 * 60 * 1000 /* 1hr */: until.hasDays() ? 60 * 1000 /* 1min */:
+		1000 /* 1s */;
 	}
 
 	private static String formatDuration(int unit, int unitLabel, Resources resources)
@@ -60,7 +66,7 @@ public final class TIInfo
 	{
 		// Calendar calendar = GregorianCalendar.getInstance(); // TimeZone.getTimeZone("UTC"));
 		// calendar.set(2014 - 1990, GregorianCalendar.JULY, 18, 19, 0);
-		DateTime dateTime = new DateTime(2014, 7, 18, 19, 0, DateTimeZone.UTC);
+		DateTime dateTime = new DateTime(2013, 7, 18, 19, 0, DateTimeZone.UTC);
 		Date2014LocalTime = dateTime.withZone(DateTimeZone.getDefault());
 	}
 }

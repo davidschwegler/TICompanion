@@ -22,6 +22,11 @@ public class CountdownService extends Service
 		m_clients = new HashSet<String>();
 	}
 
+	public static TimeUntil getCurrentTimeUntil()
+	{
+		return s_currentTimeUntil;
+	}
+
 	public static String getCurrentTimeUntilRendered()
 	{
 		return s_currentTimeUntilRendered;
@@ -46,19 +51,16 @@ public class CountdownService extends Service
 			String requestKind = intent.getStringExtra(EXTRA_REQUEST_KIND);
 			if (REQUEST_KIND_REGISTER.equals(requestKind))
 			{
-				Log.i(TAG, "REQUEST_KIND_REGISTER");
+				Log.i(TAG, REQUEST_KIND_REGISTER);
 
 				if (m_clients.add(clientId) && m_clients.size() == 1)
 					startTrackingTimeUntil();
 			}
 			else if (REQUEST_KIND_UNREGISTER.equals(requestKind))
 			{
-				Log.i(TAG, "REQUEST_KIND_UNREGISTER");
+				Log.i(TAG, REQUEST_KIND_UNREGISTER);
 				if (m_clients.remove(clientId) && m_clients.size() == 0)
-				{
 					stopTrackingTimeUntil();
-					stopSelf();
-				}
 			}
 		}
 
@@ -90,11 +92,9 @@ public class CountdownService extends Service
 
 				updateTime();
 
-				if (m_until.hasSeconds())
+				if (s_currentTimeUntil.hasSeconds())
 				{
-					long delay =
-							// m_until.hasMonths() ? 60 * 60 * 1000 /* 1hr */: m_until.hasDays() ? 60 * 1000 /* 1min */:
-							1000 /* 1s */;
+					long delay = TIInfo.getRefreshFrequency(s_currentTimeUntil);
 
 					Log.d(TAG, "Runner posting again in " + delay + "ms");
 					s_handler.postDelayed(this, delay);
@@ -112,12 +112,14 @@ public class CountdownService extends Service
 		Log.i(TAG, "stopTrackingTimeUntil()");
 		s_handler.removeCallbacks(m_runner);
 		m_runner = null;
+
+		stopSelf();
 	}
 
 	private void updateTime()
 	{
-		m_until = TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime);
-		s_currentTimeUntilRendered = TIInfo.createDisplayString(m_until, getResources());
+		s_currentTimeUntil = TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime);
+		s_currentTimeUntilRendered = TIInfo.createDisplayString(s_currentTimeUntil, getResources());
 
 		Log.d(TAG, "Updated time until: " + s_currentTimeUntilRendered);
 	}
@@ -131,7 +133,7 @@ public class CountdownService extends Service
 	private static final String TAG = "CountdownService";
 	private static final Handler s_handler = new Handler();
 	private static String s_currentTimeUntilRendered;
-	private TimeUntil m_until;
+	private static TimeUntil s_currentTimeUntil;
 	private Runnable m_runner;
 	private HashSet<String> m_clients;
 }
