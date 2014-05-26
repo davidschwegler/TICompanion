@@ -85,6 +85,25 @@ public class CountdownService extends Service
 		stopTrackingTimeUntil();
 	}
 
+	@Override
+	public void onTaskRemoved(Intent rootIntent)
+	{
+		Log.i(TAG, "onTaskRemoved()");
+		super.onTaskRemoved(rootIntent);
+
+		// when the app is swiped out of the recents list, the service is killed
+		// pre-kitkat, the service is restarted after 5s
+		// in KitKat, the service isn't restarted automatically at all
+		// schedule 2 alarms -- a greedy alarm that fires after 1s, and a fallback that fires after 5 (some forums report that 1s is too fast for some devices)
+		Intent restartServiceIntent = new Intent(getApplicationContext(), CountdownService.class);
+		restartServiceIntent.setPackage(getPackageName());
+		PendingIntent restartServicePendingIntentGreedy = PendingIntent.getService(getApplicationContext(), 0, restartServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent restartServicePendingIntentFallback = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
+		alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, restartServicePendingIntentGreedy);
+		alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 5000, restartServicePendingIntentFallback);
+	}
+
 	private void startTrackingTimeUntil()
 	{
 		Log.i(TAG, "startTrackingTimeUntil()");
