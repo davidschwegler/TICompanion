@@ -132,6 +132,7 @@ public final class CountdownNotificationManager
 								IntentUtility.getBringToFrontIntent(m_applicationContext, MainActivity.class),
 								PendingIntent.FLAG_UPDATE_CURRENT))
 						.setOngoing(true)
+						.setPriority(NotificationCompat.PRIORITY_MIN)
 						.build();
 
 		NotificationManager notificationManager = (NotificationManager) m_applicationContext.getSystemService(Context.NOTIFICATION_SERVICE);
