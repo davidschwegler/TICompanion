@@ -7,6 +7,8 @@ import android.content.IntentFilter;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
+import android.support.v4.view.MenuItemCompat;
+import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -55,6 +57,10 @@ public class MainFragment extends Fragment
 
 		MenuItem itemNotification = menu.findItem(R.id.action_show_notification);
 		itemNotification.setChecked(CountdownNotificationManager.getInstance().isShowingNotification());
+
+		MenuItem shareItem = menu.findItem(R.id.action_share);
+		m_shareActionProvider = (ShareActionProvider) MenuItemCompat.getActionProvider(shareItem);
+		updateShareIntent();
 	}
 
 	@Override
@@ -89,9 +95,9 @@ public class MainFragment extends Fragment
 
 	private void updateTimeUntil()
 	{
-		TimeUntil until = CountdownService.getCurrentTimeUntil();
-		String rendered = CountdownService.getCurrentTimeUntilRendered();
-		if (rendered == null)
+		m_timeUntil = CountdownService.getCurrentTimeUntil();
+		m_renderedTimeUntil = CountdownService.getCurrentTimeUntilRendered();
+		if (m_renderedTimeUntil == null)
 		{
 			if (LOG_DEBUG)
 				Log.d(TAG, "Wanted to update, but current time is null");
@@ -99,16 +105,30 @@ public class MainFragment extends Fragment
 		}
 
 		if (LOG_DEBUG)
-			Log.d(TAG, "Setting to " + rendered);
-		if (until.hasSeconds())
+			Log.d(TAG, "Setting to " + m_renderedTimeUntil);
+
+		if (m_timeUntil.hasSeconds())
 		{
 			m_countdownView.setVisibility(View.VISIBLE);
-			m_countdownView.setText(rendered);
+			m_countdownView.setText(m_renderedTimeUntil);
 		}
 		else
 		{
 			m_countdownView.setVisibility(View.GONE);
-			m_countdownCaptionView.setText(rendered);
+			m_countdownCaptionView.setText(m_renderedTimeUntil);
+		}
+	}
+
+	private void updateShareIntent()
+	{
+		if (m_shareActionProvider != null && m_renderedTimeUntil != null)
+		{
+			Intent intent = new Intent(Intent.ACTION_SEND);
+			intent.setType("text/plain");
+			intent.putExtra(Intent.EXTRA_TEXT, m_timeUntil.hasSeconds() ?
+					getString(R.string.share_format, m_renderedTimeUntil, SHARE_URL) :
+					getString(R.string.share_format_past, m_renderedTimeUntil, SHARE_URL));
+			m_shareActionProvider.setShareIntent(intent);
 		}
 	}
 
@@ -128,6 +148,7 @@ public class MainFragment extends Fragment
 				if (LOG_DEBUG)
 					Log.d(TAG, "BroadcastReceiver.onReceive()");
 				updateTimeUntil();
+				updateShareIntent();
 			}
 		};
 
@@ -151,8 +172,12 @@ public class MainFragment extends Fragment
 	private static final boolean LOG_DEBUG = BuildConfig.DEBUG;
 	private static final String TAG = "MainFragment";
 	private static final String CLIENT_ID = "MainFragment";
+	private static final String SHARE_URL = "https://play.google.com/store/apps/details?id=com.appenjoyment.ticompanion";
 
 	private BroadcastReceiver m_countdownReceiver;
+	private ShareActionProvider m_shareActionProvider;
 	private TextView m_countdownView;
 	private TextView m_countdownCaptionView;
+	private TimeUntil m_timeUntil;
+	private String m_renderedTimeUntil;
 }

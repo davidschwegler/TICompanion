@@ -12,4 +12,8 @@
     <string name="main_caption_date">Jul 18-21, 2014</string>
     <string name="main_caption_until_reclaimed">…until the Aegis is ready to be reclaimed…</string>
     <string name="date_display_past">The Aegis has been reclaimed!</string>
+    <string name="action_share">Share</string>
+    <string name="share_format">TI4 in %1$s! Get the countdown hype at %2$s</string>
+    <string name="share_format_past">%1$s Get the countdown hype at %2$s</string>
+
 </resources>
