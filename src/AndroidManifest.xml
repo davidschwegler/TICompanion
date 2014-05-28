@@ -10,6 +10,10 @@
 
     <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
 
+    <uses-feature
+        android:name="android.hardware.touchscreen"
+        android:required="false" />
+
     <application
         android:name="com.appenjoyment.ticompanion.TICompanionApp"
         android:allowBackup="true"
@@ -35,14 +39,15 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/widget_info" />
         </receiver>
-        
         <receiver android:name=".BootBroadcastReceiver" >
             <intent-filter>
                 <action android:name="android.intent.action.BOOT_COMPLETED" />
             </intent-filter>
         </receiver>
 
-        <service android:name=".CountdownService" android:exported="false" />
+        <service
+            android:name=".CountdownService"
+            android:exported="false" />
     </application>
 
 </manifest>
