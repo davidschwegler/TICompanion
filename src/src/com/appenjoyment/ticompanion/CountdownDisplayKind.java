@@ -3,6 +3,7 @@ package com.appenjoyment.ticompanion;
 public enum CountdownDisplayKind
 {
 	Partitioned,
+	ValveTime,
 	RoshanTimers,
 	TI3GameLengths,
 	BlackHoles,

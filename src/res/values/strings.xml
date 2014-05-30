@@ -27,5 +27,7 @@
     <string name="display_title_teleports">Teleports</string>
     <string name="display_title_death_wards">Death Wards</string>
     <string name="display_title_dream_coils">Dream Coils</string>
+    <string name="display_title_valve_time">Valve Time</string>
+    <string name="duration_valve_time">"???"</string>
 
 </resources>

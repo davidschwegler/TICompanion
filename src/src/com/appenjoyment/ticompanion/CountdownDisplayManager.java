@@ -54,6 +54,8 @@ public class CountdownDisplayManager
 				m_applicationContext.getResources(), R.string.display_title_roshan_respawns, 9.5f * 60, true));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.Teleports,
 				m_applicationContext.getResources(), R.string.display_title_teleports, 3, true));
+		m_countdownDisplays.add(new StaticTextCountdownDisplay(CountdownDisplayKind.ValveTime,
+				m_applicationContext.getResources(), R.string.display_title_valve_time, R.string.duration_valve_time));
 
 		m_prefs = applicationContext.getSharedPreferences(PREFERENCES_NAME, Context.MODE_PRIVATE);
 		String kindString = m_prefs.getString(PREFERENCE_KEY_DISPLAY_KIND, null);
