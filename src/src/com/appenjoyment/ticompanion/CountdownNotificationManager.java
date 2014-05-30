@@ -111,14 +111,15 @@ public final class CountdownNotificationManager
 
 	private void updateNotification()
 	{
-		String rendered = CountdownService.getCurrentTimeUntilRendered();
-		if (rendered == null)
+		CountdownDisplay display = CountdownService.getCurrentDisplay();
+		if (display == null)
 		{
 			if (LOG_DEBUG)
-				Log.d(TAG, "Wanted to update, but current time is null");
+				Log.d(TAG, "Wanted to update, but current countdown is null");
 			return;
 		}
 
+		String rendered = display.getCurrentTimeRendered();
 		if (LOG_DEBUG)
 			Log.d(TAG, "Setting to " + rendered);
 

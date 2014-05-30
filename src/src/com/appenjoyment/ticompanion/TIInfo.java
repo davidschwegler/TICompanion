@@ -1,4 +1,3 @@
-
 package com.appenjoyment.ticompanion;
 
 import org.joda.time.DateTime;
@@ -9,7 +8,7 @@ public final class TIInfo
 {
 	public static final DateTime Date2014LocalTime;
 
-	public static String createDisplayString(TimeUntil until, Resources resources)
+	public static String createDisplayString(PartitionedTimeUntil until, Resources resources)
 	{
 		StringBuilder builder = new StringBuilder();
 
@@ -49,12 +48,6 @@ public final class TIInfo
 			builder.append(resources.getString(R.string.date_display_past));
 
 		return builder.toString();
-	}
-
-	public static long getRefreshFrequency(TimeUntil until)
-	{
-		return // until.hasMonths() ? 60 * 60 * 1000 /* 1hr */: until.hasDays() ? 60 * 1000 /* 1min */:
-		1000 /* 1s */;
 	}
 
 	private static String formatDuration(int unit, int unitLabel, Resources resources)

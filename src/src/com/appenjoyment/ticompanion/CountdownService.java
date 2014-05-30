@@ -1,6 +1,7 @@
 package com.appenjoyment.ticompanion;
 
 import java.util.HashSet;
+import org.joda.time.DateTime;
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.app.Service;
@@ -28,14 +29,9 @@ public class CountdownService extends Service
 		m_clients = new HashSet<String>();
 	}
 
-	public static TimeUntil getCurrentTimeUntil()
+	public static CountdownDisplay getCurrentDisplay()
 	{
-		return s_currentTimeUntil;
-	}
-
-	public static String getCurrentTimeUntilRendered()
-	{
-		return s_currentTimeUntilRendered;
+		return s_currentDisplay;
 	}
 
 	@Override
@@ -105,8 +101,10 @@ public class CountdownService extends Service
 		// schedule 2 alarms -- a greedy alarm that fires after 1s, and a fallback that fires after 5 (some forums report that 1s is too fast for some devices)
 		Intent restartServiceIntent = new Intent(getApplicationContext(), CountdownService.class);
 		restartServiceIntent.setPackage(getPackageName());
-		PendingIntent restartServicePendingIntentGreedy = PendingIntent.getService(getApplicationContext(), 0, restartServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
-		PendingIntent restartServicePendingIntentFallback = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent, PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent restartServicePendingIntentGreedy = PendingIntent.getService(getApplicationContext(), 0, restartServiceIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
+		PendingIntent restartServicePendingIntentFallback = PendingIntent.getService(getApplicationContext(), 1, restartServiceIntent,
+				PendingIntent.FLAG_UPDATE_CURRENT);
 		AlarmManager alarmService = (AlarmManager) getApplicationContext().getSystemService(Context.ALARM_SERVICE);
 		alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 1000, restartServicePendingIntentGreedy);
 		alarmService.set(AlarmManager.ELAPSED_REALTIME, SystemClock.elapsedRealtime() + 5000, restartServicePendingIntentFallback);
@@ -133,9 +131,9 @@ public class CountdownService extends Service
 
 				updateTime();
 
-				if (s_currentTimeUntil.hasSeconds())
+				if (!s_currentDisplay.isInPast())
 				{
-					long delay = TIInfo.getRefreshFrequency(s_currentTimeUntil);
+					long delay = 1000;
 
 					if (LOG_DEBUG)
 						Log.d(TAG, "Runner posting again in " + delay + "ms");
@@ -143,14 +141,14 @@ public class CountdownService extends Service
 				}
 
 				// update clients second in case this broadcast causes them to remove themselves...though this won't happen in the current app code
-				updateClients();
+				broadcastTime();
 			}
 		};
 
 		// register screen on/off receiver to save battery by not running while the screen is off
-		IntentFilter filter = new IntentFilter();
-		filter.addAction(Intent.ACTION_SCREEN_ON);
-		filter.addAction(Intent.ACTION_SCREEN_OFF);
+		IntentFilter screenOnOffFilter = new IntentFilter();
+		screenOnOffFilter.addAction(Intent.ACTION_SCREEN_ON);
+		screenOnOffFilter.addAction(Intent.ACTION_SCREEN_OFF);
 		m_screenOnOffReceiver = new BroadcastReceiver()
 		{
 			@Override
@@ -162,11 +160,28 @@ public class CountdownService extends Service
 					resumeTrackingTimeUntil();
 			}
 		};
-		registerReceiver(m_screenOnOffReceiver, filter);
+		registerReceiver(m_screenOnOffReceiver, screenOnOffFilter);
 
 		PowerManager pm = (PowerManager) getSystemService(Context.POWER_SERVICE);
 		if (pm.isScreenOn())
 			m_runner.run();
+
+		// register display changed receiver
+		IntentFilter displayChangedFilter = new IntentFilter();
+		displayChangedFilter.addAction(CountdownDisplayManager.BROADCAST_ACTION_DISPLAY_CHANGED);
+		m_displayChangedReceiver = new BroadcastReceiver()
+		{
+			@Override
+			public void onReceive(Context context, Intent intent)
+			{
+				if (intent.getAction().equals(CountdownDisplayManager.BROADCAST_ACTION_DISPLAY_CHANGED))
+				{
+					s_handler.removeCallbacks(m_runner);
+					m_runner.run();
+				}
+			}
+		};
+		LocalBroadcastManager.getInstance(getApplicationContext()).registerReceiver(m_displayChangedReceiver, displayChangedFilter);
 	}
 
 	private void stopTrackingTimeUntil()
@@ -179,6 +194,9 @@ public class CountdownService extends Service
 
 			unregisterReceiver(m_screenOnOffReceiver);
 			m_screenOnOffReceiver = null;
+
+			unregisterReceiver(m_displayChangedReceiver);
+			m_displayChangedReceiver = null;
 		}
 	}
 
@@ -194,14 +212,11 @@ public class CountdownService extends Service
 
 	private void updateTime()
 	{
-		s_currentTimeUntil = TimeUntil.TimeUntilDate(TIInfo.Date2014LocalTime);
-		s_currentTimeUntilRendered = TIInfo.createDisplayString(s_currentTimeUntil, getResources());
-
-		if (LOG_DEBUG)
-			Log.d(TAG, "Updated time until: " + s_currentTimeUntilRendered);
+		s_currentDisplay = CountdownDisplayManager.getInstance().getCurrentDisplay();
+		s_currentDisplay.setCurrentTime(DateTime.now());
 	}
 
-	private void updateClients()
+	private void broadcastTime()
 	{
 		Intent intent = new Intent(BROADCAST_ACTION_UPDATE);
 		LocalBroadcastManager.getInstance(getApplicationContext()).sendBroadcast(intent);
@@ -210,9 +225,9 @@ public class CountdownService extends Service
 	private static final boolean LOG_DEBUG = BuildConfig.DEBUG;
 	private static final String TAG = "CountdownService";
 	private static final Handler s_handler = new Handler();
-	private static String s_currentTimeUntilRendered;
-	private static TimeUntil s_currentTimeUntil;
+	private static CountdownDisplay s_currentDisplay;
 	private Runnable m_runner;
 	private HashSet<String> m_clients;
 	private BroadcastReceiver m_screenOnOffReceiver;
+	private BroadcastReceiver m_displayChangedReceiver;
 }

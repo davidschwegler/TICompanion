@@ -1,5 +1,7 @@
 package com.appenjoyment.ticompanion;
 
+import java.util.ArrayList;
+import java.util.List;
 import android.content.BroadcastReceiver;
 import android.content.Context;
 import android.content.Intent;
@@ -8,6 +10,9 @@ import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v4.content.LocalBroadcastManager;
 import android.support.v4.view.MenuItemCompat;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBar.OnNavigationListener;
+import android.support.v7.app.ActionBarActivity;
 import android.support.v7.widget.ShareActionProvider;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -16,6 +21,8 @@ import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.ArrayAdapter;
+import android.widget.SpinnerAdapter;
 import android.widget.TextView;
 
 public class MainFragment extends Fragment
@@ -26,6 +33,39 @@ public class MainFragment extends Fragment
 		super.onCreate(savedInstanceState);
 
 		setHasOptionsMenu(true);
+
+		ActionBarActivity activity = ((ActionBarActivity) getActivity());
+		activity.getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+
+		final CountdownDisplayManager countdownDisplayManager = CountdownDisplayManager.getInstance();
+		List<String> displayTitles = new ArrayList<String>();
+		for (CountdownDisplay display : countdownDisplayManager.getCountdownDisplays())
+			displayTitles.add(display.getTitle());
+
+		SpinnerAdapter spinnerAdapter = new ArrayAdapter<String>(getActivity(), R.layout.support_simple_spinner_dropdown_item, displayTitles)
+		{
+			@Override
+			public View getView(int position, View convertView, ViewGroup parent)
+			{
+				if (convertView == null)
+					convertView = getActivity().getLayoutInflater().inflate(R.layout.title_spinner_item, null);
+
+				return super.getView(position, convertView, parent);
+			}
+		};
+
+		OnNavigationListener onNavigationListener = new OnNavigationListener()
+		{
+			@Override
+			public boolean onNavigationItemSelected(int position, long itemId)
+			{
+				countdownDisplayManager.setCurrentDisplay(countdownDisplayManager.getCountdownDisplays().get(position));
+				return false;
+			}
+		};
+		activity.getSupportActionBar().setListNavigationCallbacks(spinnerAdapter, onNavigationListener);
+		activity.getSupportActionBar().setSelectedNavigationItem(
+				countdownDisplayManager.getCountdownDisplays().indexOf(countdownDisplayManager.getCurrentDisplay()));
 	}
 
 	@Override
@@ -95,39 +135,40 @@ public class MainFragment extends Fragment
 
 	private void updateTimeUntil()
 	{
-		m_timeUntil = CountdownService.getCurrentTimeUntil();
-		m_renderedTimeUntil = CountdownService.getCurrentTimeUntilRendered();
-		if (m_renderedTimeUntil == null)
+		m_countdownDisplay = CountdownService.getCurrentDisplay();
+		if (m_countdownDisplay == null)
 		{
 			if (LOG_DEBUG)
-				Log.d(TAG, "Wanted to update, but current time is null");
+				Log.d(TAG, "Wanted to update, but current countdown is null");
 			return;
 		}
 
+		String rendered = m_countdownDisplay.getCurrentTimeRendered();
 		if (LOG_DEBUG)
-			Log.d(TAG, "Setting to " + m_renderedTimeUntil);
+			Log.d(TAG, "Setting to " + rendered);
 
-		if (m_timeUntil.hasSeconds())
+		if (!m_countdownDisplay.isInPast())
 		{
 			m_countdownView.setVisibility(View.VISIBLE);
-			m_countdownView.setText(m_renderedTimeUntil);
+			m_countdownView.setText(rendered);
 		}
 		else
 		{
 			m_countdownView.setVisibility(View.GONE);
-			m_countdownCaptionView.setText(m_renderedTimeUntil);
+			m_countdownCaptionView.setText(rendered);
 		}
 	}
 
 	private void updateShareIntent()
 	{
-		if (m_shareActionProvider != null && m_renderedTimeUntil != null)
+		if (m_shareActionProvider != null && m_countdownDisplay != null)
 		{
+			String rendered = m_countdownDisplay.getCurrentTimeRendered();
 			Intent intent = new Intent(Intent.ACTION_SEND);
 			intent.setType("text/plain");
-			intent.putExtra(Intent.EXTRA_TEXT, m_timeUntil.hasSeconds() ?
-					getString(R.string.share_format, m_renderedTimeUntil, SHARE_URL) :
-					getString(R.string.share_format_past, m_renderedTimeUntil, SHARE_URL));
+			intent.putExtra(Intent.EXTRA_TEXT, !m_countdownDisplay.isInPast() ?
+					getString(R.string.share_format, rendered, SHARE_URL) :
+					getString(R.string.share_format_past, rendered, SHARE_URL));
 			m_shareActionProvider.setShareIntent(intent);
 		}
 	}
@@ -178,6 +219,5 @@ public class MainFragment extends Fragment
 	private ShareActionProvider m_shareActionProvider;
 	private TextView m_countdownView;
 	private TextView m_countdownCaptionView;
-	private TimeUntil m_timeUntil;
-	private String m_renderedTimeUntil;
+	private CountdownDisplay m_countdownDisplay;
 }

@@ -148,16 +148,17 @@ public final class CountdownWidgetManager
 
 	private void updateWidget(int id)
 	{
-		String rendered = CountdownService.getCurrentTimeUntilRendered();
-		if (rendered == null)
+		CountdownDisplay display = CountdownService.getCurrentDisplay();
+		if (display == null)
 		{
 			if (LOG_DEBUG)
-				Log.d(TAG, "Wanted to update " + id + ", but current time is null");
+				Log.d(TAG, "Wanted to update, but current countdown is null");
 			return;
 		}
 
+		String rendered = display.getCurrentTimeRendered();
 		if (LOG_DEBUG)
-			Log.d(TAG, "Setting " + id + " to " + rendered);
+			Log.d(TAG, "Setting to " + rendered);
 
 		RemoteViews remoteViews = new RemoteViews(m_applicationContext.getPackageName(), R.layout.widget_layout);
 		remoteViews.setTextViewText(R.id.update, rendered);
