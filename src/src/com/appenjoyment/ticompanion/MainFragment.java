@@ -33,7 +33,11 @@ public class MainFragment extends Fragment
 		super.onCreate(savedInstanceState);
 
 		setHasOptionsMenu(true);
+	}
 
+	@Override
+	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
+	{
 		ActionBarActivity activity = ((ActionBarActivity) getActivity());
 		activity.getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
 
@@ -66,11 +70,7 @@ public class MainFragment extends Fragment
 		activity.getSupportActionBar().setListNavigationCallbacks(spinnerAdapter, onNavigationListener);
 		activity.getSupportActionBar().setSelectedNavigationItem(
 				countdownDisplayManager.getCountdownDisplays().indexOf(countdownDisplayManager.getCurrentDisplay()));
-	}
 
-	@Override
-	public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState)
-	{
 		View rootView = inflater.inflate(R.layout.fragment_main, container, false);
 
 		m_countdownView = (TextView) rootView.findViewById(R.id.countdown);
