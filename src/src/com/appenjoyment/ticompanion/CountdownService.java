@@ -195,7 +195,7 @@ public class CountdownService extends Service
 			unregisterReceiver(m_screenOnOffReceiver);
 			m_screenOnOffReceiver = null;
 
-			unregisterReceiver(m_displayChangedReceiver);
+			LocalBroadcastManager.getInstance(getApplicationContext()).unregisterReceiver(m_displayChangedReceiver);
 			m_displayChangedReceiver = null;
 		}
 	}
