@@ -11,5 +11,6 @@ public class TICompanionApp extends Application
 		CountdownDisplayManager.getInstance().init(getApplicationContext());
 		CountdownWidgetManager.getInstance().init(getApplicationContext());
 		CountdownNotificationManager.getInstance().init(getApplicationContext());
+		RateUsManager.scheduleAlarm(getApplicationContext());
 	};
 }

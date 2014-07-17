@@ -29,5 +29,10 @@
     <string name="display_title_dream_coils">Dream Coils</string>
     <string name="display_title_valve_time">Valve Time</string>
     <string name="duration_valve_time">"???"</string>
+    <string name="rate_prompt_1_hour">TI4 is minutes away! Would you please rate this app so more people can find it next year?</string>
+    <string name="rate_prompt_past">TI4 has been great! Would you please rate this app so more people can find it next year?</string>
+    <string name="rate_prompt_title">Was this a cool app?</string>
+    <string name="rate_prompt_yes">Yes</string>
+    <string name="rate_prompt_no">No</string>
 
 </resources>
