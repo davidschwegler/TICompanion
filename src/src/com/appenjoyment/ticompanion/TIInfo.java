@@ -6,7 +6,7 @@ import android.content.res.Resources;
 
 public final class TIInfo
 {
-	public static final DateTime Date2014LocalTime;
+	public static final DateTime DateTILocalTime;
 
 	public static String createDisplayString(PartitionedTimeUntil until, Resources resources)
 	{
@@ -59,7 +59,7 @@ public final class TIInfo
 	{
 		// Calendar calendar = GregorianCalendar.getInstance(); // TimeZone.getTimeZone("UTC"));
 		// calendar.set(2014 - 1990, GregorianCalendar.JULY, 18, 19, 0);
-		DateTime dateTime = new DateTime(2014, 7, 18, 16, 0, DateTimeZone.UTC);
-		Date2014LocalTime = dateTime.withZone(DateTimeZone.getDefault());
+		DateTime dateTime = new DateTime(2015, 8, 3, 18, 0, DateTimeZone.UTC);
+		DateTILocalTime = dateTime.withZone(DateTimeZone.getDefault());
 	}
 }

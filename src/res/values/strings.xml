@@ -1,19 +1,19 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
 
-    <string name="app_name">TI4 Countdown!</string>
+    <string name="app_name">TI5 Countdown!</string>
     <string name="action_show_notification">Show notification</string>
     <string name="duration_months">MO</string>
     <string name="duration_days">D</string>
     <string name="duration_hours">H</string>
     <string name="duration_minutes">M</string>
     <string name="duration_seconds">S</string>
-    <string name="notification_title">TI4 Countdown!</string>
-    <string name="main_caption_date">Jul 18-21, 2014</string>
+    <string name="notification_title">TI5 Countdown!</string>
+    <string name="main_caption_date">Aug 3-8, 2015</string>
     <string name="main_caption_until_reclaimed">…until the Aegis is ready to be reclaimed…</string>
     <string name="date_display_past">The Aegis has been reclaimed!</string>
     <string name="action_share">Share</string>
-    <string name="share_format">TI4 in %1$s! Get the countdown hype at %2$s</string>
+    <string name="share_format">TI5 in %1$s! Get the countdown hype at %2$s</string>
     <string name="share_format_past">%1$s Get the countdown hype at %2$s</string>
     <string name="display_title_black_holes">Black Holes</string>
     <string name="display_title_days">Days</string>
@@ -22,15 +22,15 @@
     <string name="display_title_naga_songs">Naga Songs</string>
     <string name="display_title_pgg_black_holes">PGG Black Holes</string>
     <string name="display_title_roshan_respawns">Roshan Respawns</string>
-    <string name="display_title_ti3_games">TI3 Games</string>
+    <string name="display_title_previous_ti_games">TI4 Games</string>
     <string name="display_title_seconds">Seconds</string>
     <string name="display_title_teleports">Teleports</string>
     <string name="display_title_death_wards">Death Wards</string>
     <string name="display_title_dream_coils">Dream Coils</string>
     <string name="display_title_valve_time">Valve Time</string>
     <string name="duration_valve_time">"???"</string>
-    <string name="rate_prompt_1_hour">TI4 is minutes away! Would you please rate this app so more people can find it next year?</string>
-    <string name="rate_prompt_past">TI4 has been great! Would you please rate this app so more people can find it next year?</string>
+    <string name="rate_prompt_1_hour">TI5 is minutes away! Would you please rate this app so more people can find it next year?</string>
+    <string name="rate_prompt_past">TI5 has been great! Would you please rate this app so more people can find it next year?</string>
     <string name="rate_prompt_title">Was this a cool app?</string>
     <string name="rate_prompt_yes">Yes</string>
     <string name="rate_prompt_no">No</string>

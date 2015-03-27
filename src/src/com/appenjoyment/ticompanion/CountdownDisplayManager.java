@@ -39,21 +39,21 @@ public class CountdownDisplayManager
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.Seconds,
 				m_applicationContext.getResources(), R.string.display_title_seconds, 1, false));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.TI3GameLengths,
-				m_applicationContext.getResources(), R.string.display_title_ti3_games, 33.98f * 60, true));
+				m_applicationContext.getResources(), R.string.display_title_previous_ti_games, DotaDurations.PreviousTIGame, true));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.BlackHoles,
-				m_applicationContext.getResources(), R.string.display_title_black_holes, 7, true));
+				m_applicationContext.getResources(), R.string.display_title_black_holes, DotaDurations.BlackHole, true));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.PGGBlackHoles,
-				m_applicationContext.getResources(), R.string.display_title_pgg_black_holes, 0.001f, false));
+				m_applicationContext.getResources(), R.string.display_title_pgg_black_holes, DotaDurations.PGGBlackHole, false));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.DeathWards,
-				m_applicationContext.getResources(), R.string.display_title_death_wards, 8, true));
+				m_applicationContext.getResources(), R.string.display_title_death_wards, DotaDurations.DeathWard, true));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.DreamCoils,
-				m_applicationContext.getResources(), R.string.display_title_dream_coils, 6, true));
+				m_applicationContext.getResources(), R.string.display_title_dream_coils, DotaDurations.DreamCoil, true));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.NagaSleeps,
-				m_applicationContext.getResources(), R.string.display_title_naga_songs, 7, true));
+				m_applicationContext.getResources(), R.string.display_title_naga_songs, DotaDurations.NagaSleep, true));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.RoshanTimers,
-				m_applicationContext.getResources(), R.string.display_title_roshan_respawns, 9.5f * 60, true));
+				m_applicationContext.getResources(), R.string.display_title_roshan_respawns, DotaDurations.RoshanTimer, true));
 		m_countdownDisplays.add(new PeriodCountdownDisplay(CountdownDisplayKind.Teleports,
-				m_applicationContext.getResources(), R.string.display_title_teleports, 3, true));
+				m_applicationContext.getResources(), R.string.display_title_teleports, DotaDurations.Teleport, true));
 		m_countdownDisplays.add(new StaticTextCountdownDisplay(CountdownDisplayKind.ValveTime,
 				m_applicationContext.getResources(), R.string.display_title_valve_time, R.string.duration_valve_time));
 

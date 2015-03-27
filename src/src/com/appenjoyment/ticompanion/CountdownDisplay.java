@@ -36,7 +36,7 @@ public abstract class CountdownDisplay
 			throw new IllegalArgumentException("currentTime is null");
 
 		m_currentTime = currentTime;
-		m_isInPast = TIInfo.Date2014LocalTime.isBefore(m_currentTime);
+		m_isInPast = TIInfo.DateTILocalTime.isBefore(m_currentTime);
 		m_rendered = render();
 	}
 

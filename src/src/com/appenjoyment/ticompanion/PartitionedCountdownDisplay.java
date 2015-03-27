@@ -12,6 +12,6 @@ public final class PartitionedCountdownDisplay extends CountdownDisplay
 	@Override
 	protected String render()
 	{
-		return TIInfo.createDisplayString(TimeUntil.getPartitionedTimeUntilDate(getCurrentTime(), TIInfo.Date2014LocalTime), getResources());
+		return TIInfo.createDisplayString(TimeUntil.getPartitionedTimeUntilDate(getCurrentTime(), TIInfo.DateTILocalTime), getResources());
 	}
 }

@@ -40,6 +40,7 @@ public class MainFragment extends Fragment
 	{
 		ActionBarActivity activity = ((ActionBarActivity) getActivity());
 		activity.getSupportActionBar().setNavigationMode(ActionBar.NAVIGATION_MODE_LIST);
+		activity.getSupportActionBar().setDisplayShowTitleEnabled(false);
 
 		final CountdownDisplayManager countdownDisplayManager = CountdownDisplayManager.getInstance();
 		List<String> displayTitles = new ArrayList<String>();

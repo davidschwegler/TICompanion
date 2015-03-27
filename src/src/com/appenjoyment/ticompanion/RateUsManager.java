@@ -53,7 +53,7 @@ public class RateUsManager
 
 	public static void scheduleAlarm(Context context)
 	{
-		// schedule a notification 1hr before TI4 (or now, if within 4 days of the event) asking them to rate the app
+		// schedule a notification 1hr before TI (or now, if within 4 days of the event) asking them to rate the app
 		Intent rateApplicationPrompt = new Intent(ACTION_RATE_US);
 		rateApplicationPrompt.setPackage(context.getPackageName());
 
@@ -62,13 +62,13 @@ public class RateUsManager
 
 		AlarmManager alarmService = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
 
-		DateTime alarmTime = TIInfo.Date2014LocalTime.minusHours(1);
+		DateTime alarmTime = TIInfo.DateTILocalTime.minusHours(1);
 		if (alarmTime.isAfterNow())
 		{
 			Log.i(TAG, "Set alarm for 1hr before TI");
 			alarmService.set(AlarmManager.RTC, alarmTime.getMillis(), rateApplicationPromptPendingIntent);
 		}
-		else if (TIInfo.Date2014LocalTime.plusDays(4).isAfterNow())
+		else if (TIInfo.DateTILocalTime.plusDays(4).isAfterNow())
 		{
 			Log.i(TAG, "Set alarm for now");
 			alarmService.set(AlarmManager.RTC, System.currentTimeMillis(), rateApplicationPromptPendingIntent);
@@ -110,7 +110,7 @@ public class RateUsManager
 
 	private static String createRateUsMessage(Context context)
 	{
-		DateTime alarmTime = TIInfo.Date2014LocalTime;
+		DateTime alarmTime = TIInfo.DateTILocalTime;
 
 		// use the "almost here" text if the alarm is fired before the event
 		boolean use1Hr = alarmTime.isAfterNow();
@@ -120,7 +120,7 @@ public class RateUsManager
 	private static final String TAG = RateUsManager.class.getName();
 
 	private static final String PREFERENCES_NAME = "RateUs";
-	private static final String PREFERENCE_KEY_NOTIFIED_FOR_RATE_PROMPT = "NotifiedForRatePrompt";
+	private static final String PREFERENCE_KEY_NOTIFIED_FOR_RATE_PROMPT = "NotifiedForRatePrompt2015";
 	private static final String ACTION_RATE_US = "com.appenjoyment.ticountdown.action.RATE_US";
 	private static final int NOTIFICATION_ID = 100;
 }

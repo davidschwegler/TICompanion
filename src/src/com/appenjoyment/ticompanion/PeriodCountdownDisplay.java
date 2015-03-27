@@ -23,7 +23,7 @@ public final class PeriodCountdownDisplay extends CountdownDisplay
 	@Override
 	public String render()
 	{
-		long seconds = TimeUntil.getSecondsUntilDate(getCurrentTime(), TIInfo.Date2014LocalTime);
+		long seconds = TimeUntil.getSecondsUntilDate(getCurrentTime(), TIInfo.DateTILocalTime);
 		if (seconds <= 0)
 			return getResources().getString(R.string.date_display_past);
 
